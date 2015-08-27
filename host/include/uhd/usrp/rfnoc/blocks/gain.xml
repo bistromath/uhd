@@ -1,0 +1,54 @@
+<!--This defines one NoC-Block.-->
+<nocblock>
+  <name>Gain</name>
+  <blockname>Gain</blockname>
+  <!--There can be several of these:-->
+  <ids>
+    <id revision="0">B00B</id>
+  </ids>
+  <!-- Registers -->
+  <registers>
+    <setreg>
+      <name>GAIN</name>
+      <address>129</address>
+    </setreg>
+  </registers>
+  <!-- Args -->
+  <args>
+    <arg>
+      <name>gain</name>
+      <type>float</type>
+      <value>1.0</value>
+      <check>GE($gain, -256.0) AND LE($gain, 256.0)</check>
+      <check_message>Gain must be in (-256, 256).</check_message>
+      <action>SR_WRITE("GAIN", IROUND(MULT($gain, 256.0)))</action>
+    </arg>
+  </args>
+  <ports>
+    <sink>
+      <name>in</name>
+      <type>sc16</type>
+    </sink>
+    <source>
+      <name>out</name>
+      <type>sc16</type>
+    </source>
+  </ports>
+  <!--<components>-->
+    <!--<component>-->
+      <!--<key revision="1">nocshell</key>-->
+    <!--</component>-->
+    <!--<component srbase="0">-->
+      <!--[>Will look for a component with this key:<]-->
+      <!--<key revision="1">componentname</key>-->
+    <!--</component>-->
+  <!--</components>-->
+  <!--<connection>-->
+    <!--<source port="0">nocshell</source>-->
+    <!--<sink port="0">componentname</sink>-->
+  <!--</connection>-->
+  <!--<connection>-->
+    <!--<source port="0">componentname</source>-->
+    <!--<sink port="0">nocshell</sink>-->
+  <!--</connection>-->
+</nocblock>
