@@ -4,7 +4,8 @@
   <blockname>Gain</blockname>
   <!--There can be several of these:-->
   <ids>
-    <id revision="0">B00B</id>
+      <id revision="0">B00B</id>
+      <id revision="0">B00C</id>
   </ids>
   <!-- Registers -->
   <registers>

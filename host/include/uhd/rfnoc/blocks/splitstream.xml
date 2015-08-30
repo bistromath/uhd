@@ -4,7 +4,8 @@
   <blockname>SplitStream</blockname>
   <!--There can be several of these:-->
   <ids>
-    <id revision="0">5757</id>
+      <id revision="0">5757</id>
+      <id revision="0">5758</id>
   </ids>
   <!-- This block takes any type, hence we skip the <type> tag: -->
   <ports>
