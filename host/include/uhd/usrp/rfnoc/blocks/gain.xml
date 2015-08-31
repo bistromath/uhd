@@ -18,10 +18,10 @@
   <args>
     <arg>
       <name>gain</name>
-      <type>float</type>
+      <type>double</type>
       <value>1.0</value>
-      <check>GE($gain, -256.0) AND LE($gain, 256.0)</check>
-      <check_message>Gain must be in (-256, 256).</check_message>
+      <check>GT($gain, 0.0) AND LT($gain, 256.0)</check>
+      <check_message>Gain must be in (0, 256).</check_message>
       <action>SR_WRITE("GAIN", IROUND(MULT($gain, 256.0)))</action>
     </arg>
   </args>
