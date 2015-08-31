@@ -1,7 +1,7 @@
 <!--This defines one NoC-Block.-->
 <nocblock>
-  <name>Envelope</name>
-  <blockname>Envelope approximator</blockname>
+  <name>Envelope approximator</name>
+  <blockname>Envelope</blockname>
   <!--There can be several of these:-->
   <ids>
     <id revision="0">B010</id>
@@ -16,14 +16,11 @@
     <source>
       <name>mag</name>
       <type>sc16</type>
-      <port>0</port>
     </source>
     <source>
       <name>phase</name>
       <type>sc16</type>
-      <port>1</port>
     </source>
-
   </ports>
   <!--<components>-->
     <!--<component>-->
