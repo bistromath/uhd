@@ -14,9 +14,16 @@
       <type>sc16</type>
     </sink>
     <source>
-      <name>out</name>
+      <name>mag</name>
       <type>sc16</type>
+      <port>0</port>
     </source>
+    <source>
+      <name>phase</name>
+      <type>sc16</type>
+      <port>1</port>
+    </source>
+
   </ports>
   <!--<components>-->
     <!--<component>-->
