@@ -6,6 +6,7 @@
   <ids>
       <id revision="0">B00B</id>
       <id revision="0">B00C</id>
+      <id revision="0">B00D</id>
   </ids>
   <!-- Registers -->
   <registers>
