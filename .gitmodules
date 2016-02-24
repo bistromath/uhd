@@ -1,4 +1,4 @@
 [submodule "fpga-src"]
 	path = fpga-src
-	url = https://github.com/EttusResearch/fpga.git
-	branch = rfnoc-devel
+	url = https://github.com/bistromath/fpga.git
+	branch = gmrr-rfnoc
