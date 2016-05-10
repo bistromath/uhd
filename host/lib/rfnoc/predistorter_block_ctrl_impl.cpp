@@ -46,8 +46,10 @@ public:
             default_taps[i] = i*256;
         }
 
-        for(int i=0; i<4; i++)
+        for(int i=0; i<4; i++) {
+            UHD_MSG(status) << "predistorter_block: writing taps for input " << i << "..." << std::endl;
             set_taps(i, default_taps);
+        }
     }
 
     void set_taps(size_t which, const std::vector<int> &taps)
