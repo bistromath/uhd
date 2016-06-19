@@ -24,7 +24,7 @@ using namespace uhd::rfnoc;
 class predistorter_block_ctrl_impl : public predistorter_block_ctrl
 {
 public:
-    const size_t n_taps = 128;
+    const size_t n_taps = 4096;
 
     static boost::uint32_t AXIS_CONFIG_TAPS(size_t which) {
         return AXIS_CONFIG_BUS+2*which;
@@ -43,11 +43,13 @@ public:
         // TODO FIXME: what's your scaling?
         std::vector<int> default_taps(n_taps);
         for(int i=0; i<n_taps; i++) {
-            default_taps[i] = i*256;
+            default_taps[i] = i*(32768/n_taps);
         }
 
-        for(int i=0; i<4; i++)
+        for(int i=0; i<4; i++) {
+            UHD_MSG(status) << "predistorter_block: writing taps for input " << i << "..." << std::endl;
             set_taps(i, default_taps);
+        }
     }
 
     void set_taps(size_t which, const std::vector<int> &taps)
