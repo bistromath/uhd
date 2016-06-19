@@ -1,7 +1,7 @@
 <!--This defines one NoC-Block.-->
 <nocblock>
   <name>Predistorter</name>
-  <blockname>predistorter</blockname>
+  <blockname>Predistorter</blockname>
   <!--There can be several of these:-->
   <ids>
     <id revision="0">6275747473</id>
