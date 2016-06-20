@@ -63,11 +63,18 @@ public:
         }
 
         // Write taps via the reload bus
-        for (size_t i = 0; i < taps.size() - 1; i++) {
+        // Note that we're sending taps.size() + 1 taps in total.
+        // This is done because there are actually ntaps*2 taps
+        // in the predistorter. The latter half are negative.
+        // We send this last t
+        for (size_t i = 0; i < taps.size(); i++) {
             sr_write(AXIS_CONFIG_TAPS(which), boost::uint32_t(taps[i]));
         }
+        for (size_t i = 0; i < taps.size()-1; i++) {
+            sr_write(AXIS_CONFIG_TAPS(which), boost::uint32_t(0));
+        }
         // Assert tlast when sending the spinal tap (haha, it's actually the final tap).
-        sr_write(AXIS_CONFIG_TAPS_TLAST(which), boost::uint32_t(taps.back()));
+        sr_write(AXIS_CONFIG_TAPS_TLAST(which), boost::uint32_t(0));
     }
 
 private:
