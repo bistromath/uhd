@@ -71,7 +71,7 @@ public:
             sr_write(AXIS_CONFIG_TAPS(which), boost::uint32_t(taps[i]));
         }
         for (size_t i = 0; i < taps.size()-1; i++) {
-            sr_write(AXIS_CONFIG_TAPS(which), boost::uint32_t(0));
+            sr_write(AXIS_CONFIG_TAPS(which), boost::uint32_t(taps.back()));
         }
         // Assert tlast when sending the spinal tap (haha, it's actually the final tap).
         sr_write(AXIS_CONFIG_TAPS_TLAST(which), boost::uint32_t(0));
