@@ -1,0 +1,71 @@
+<!--This defines one NoC-Block.-->
+<nocblock>
+  <name>Mag phase with gains</name>
+  <blockname>Magphase</blockname>
+  <!--There can be several of these:-->
+  <ids>
+    <id revision="0">8844</id>
+  </ids>
+  <ports>
+    <sink>
+      <name>in</name>
+      <type>sc16</type>
+    </sink>
+    <source>
+      <name>mag</name>
+      <type>sc16</type>
+      <port>0</port>
+    </source>
+    <source>
+      <name>norm</name>
+      <type>sc16</type>
+      <port>1</port>
+    </source>
+  </ports>
+  <registers>
+    <setreg>
+      <name>MAG_GAIN</name>
+      <address>192</address>
+    </setreg>
+    <setreg>
+      <name>PHASE_GAIN</name>
+      <address>193</address>
+    </setreg>
+  </registers>
+  <!-- Args -->
+  <args>
+    <arg>
+      <name>mag_gain</name>
+      <type>double</type>
+      <value>1.0</value>
+      <check>GT($mag_gain, 0.0) AND LT($mag_gain, 128.0)</check>
+      <check_message>Magnitude gain must be in (0, 128).</check_message>
+      <action>SR_WRITE("MAG_GAIN", IROUND(MULT($mag_gain, 512.0)))</action>
+    </arg>
+    <arg>
+      <name>phase_gain</name>
+      <type>double</type>
+      <value>1.0</value>
+      <check>GT($phase_gain, 0.0) AND LT($phase_gain, 128.0)</check>
+      <check_message>Phase gain must be in (0, 128).</check_message>
+      <action>SR_WRITE("PHASE_GAIN", IROUND(MULT($phase_gain, 512.0)))</action>
+    </arg>
+  </args>
+  <!--<components>-->
+    <!--<component>-->
+      <!--<key revision="1">nocshell</key>-->
+    <!--</component>-->
+    <!--<component srbase="0">-->
+      <!--[>Will look for a component with this key:<]-->
+      <!--<key revision="1">componentname</key>-->
+    <!--</component>-->
+  <!--</components>-->
+  <!--<connection>-->
+    <!--<source port="0">nocshell</source>-->
+    <!--<sink port="0">componentname</sink>-->
+  <!--</connection>-->
+  <!--<connection>-->
+    <!--<source port="0">componentname</source>-->
+    <!--<sink port="0">nocshell</sink>-->
+  <!--</connection>-->
+</nocblock>

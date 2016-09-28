@@ -43,6 +43,7 @@ IF(ENABLE_RFNOC)
         radio_ctrl.hpp
         siggen_block_ctrl.hpp
         window_block_ctrl.hpp
+        predistorter_block_ctrl.hpp
         DESTINATION ${INCLUDE_DIR}/uhd/rfnoc
         COMPONENT headers
     )
