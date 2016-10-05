@@ -1,22 +1,24 @@
 <!--This defines one NoC-Block.-->
 <nocblock>
-  <name>Predistorter</name>
-  <blockname>Predistorter</blockname>
+  <name>Complex multiply</name>
+  <blockname>Multiply</blockname>
   <!--There can be several of these:-->
   <ids>
-    <id revision="0">6275747473</id>
+    <id revision="0">6D75</id>
   </ids>
+  <!-- Registers -->
+  <!-- Args -->
   <ports>
     <sink>
-      <name>in</name>
+      <name>in0</name>
       <type>sc16</type>
     </sink>
+    <sink>
+        <name>in1</name>
+        <type>sc16</type>
+    </sink>
     <source>
-      <name>out0</name>
-      <type>sc16</type>
-    </source>
-    <source>
-      <name>out1</name>
+      <name>out</name>
       <type>sc16</type>
     </source>
   </ports>

@@ -28,7 +28,7 @@
       <address>192</address>
     </setreg>
     <setreg>
-      <name>PHASE_GAIN</name>
+      <name>SQUELCH</name>
       <address>193</address>
     </setreg>
   </registers>
@@ -38,17 +38,20 @@
       <name>mag_gain</name>
       <type>double</type>
       <value>1.0</value>
-      <check>GT($mag_gain, 0.0) AND LT($mag_gain, 128.0)</check>
+<!---      <check>GT($mag_gain, 0.0) AND LT($mag_gain, 128.0)</check>
       <check_message>Magnitude gain must be in (0, 128).</check_message>
+-->
       <action>SR_WRITE("MAG_GAIN", IROUND(MULT($mag_gain, 512.0)))</action>
     </arg>
     <arg>
-      <name>phase_gain</name>
+      <name>squelch</name>
       <type>double</type>
-      <value>1.0</value>
-      <check>GT($phase_gain, 0.0) AND LT($phase_gain, 128.0)</check>
-      <check_message>Phase gain must be in (0, 128).</check_message>
-      <action>SR_WRITE("PHASE_GAIN", IROUND(MULT($phase_gain, 512.0)))</action>
+      <value>0.0</value>
+<!--
+      <check>GT($squelch, 0.0) AND LT($squelch, 1.0)</check>
+      <check_message>Squelch must be in (0, 1).</check_message>
+      <action>SR_WRITE("SQUELCH", IROUND(MULT($squelch, 32767.0)))</action>
+-->
     </arg>
   </args>
   <!--<components>-->
