@@ -41,7 +41,7 @@
 <!---      <check>GT($mag_gain, 0.0) AND LT($mag_gain, 128.0)</check>
       <check_message>Magnitude gain must be in (0, 128).</check_message>
 -->
-      <action>SR_WRITE("MAG_GAIN", IROUND(MULT($mag_gain, 512.0)))</action>
+      <action>SR_WRITE("MAG_GAIN", IROUND(MULT($mag_gain, 256.0)))</action>
     </arg>
     <arg>
       <name>squelch</name>
@@ -50,8 +50,8 @@
 <!--
       <check>GT($squelch, 0.0) AND LT($squelch, 1.0)</check>
       <check_message>Squelch must be in (0, 1).</check_message>
-      <action>SR_WRITE("SQUELCH", IROUND(MULT($squelch, 32767.0)))</action>
 -->
+      <action>SR_WRITE("SQUELCH", IROUND(MULT($squelch, 16384.0)))</action>
     </arg>
   </args>
   <!--<components>-->
