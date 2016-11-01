@@ -272,6 +272,9 @@ void radio_ctrl_impl::issue_stream_cmd(const uhd::stream_cmd_t &stream_cmd, cons
     cmd_word |= boost::uint32_t((inst_stop)?             1 : 0) << 28;
     cmd_word |= (inst_samps)? stream_cmd.num_samps : ((inst_stop)? 0 : 1);
 
+    //FIXME disable RX timestamps!
+    sr_write(regs::RX_CTRL_OUTPUT_FORMAT, boost::uint32_t(0), chan);
+
     //issue the stream command
     const boost::uint64_t ticks = (stream_cmd.stream_now)? 0 : stream_cmd.time_spec.to_ticks(get_rate());
     sr_write(regs::RX_CTRL_CMD, cmd_word, chan);

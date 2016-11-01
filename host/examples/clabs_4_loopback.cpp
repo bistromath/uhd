@@ -21,10 +21,9 @@
 #include <uhd/utils/safe_main.hpp>
 #include <uhd/device3.hpp>
 #include <uhd/rfnoc/radio_ctrl.hpp>
-#include <uhd/rfnoc/ddc_block_ctrl.hpp>
-#include <uhd/rfnoc/duc_block_ctrl.hpp>
-#include <uhd/rfnoc/dma_fifo_block_ctrl.hpp>
 #include <uhd/rfnoc/source_block_ctrl_base.hpp>
+//TODO include other block controllers as necessary
+
 #include <uhd/exception.hpp>
 #include <boost/program_options.hpp>
 #include <boost/format.hpp>
@@ -223,23 +222,15 @@ int UHD_SAFE_MAIN(int argc, char *argv[]){
 
     //variables to be set by po
     std::string args, file, format, ant, subdev, ref, wirefmt, streamargs, radio_args, block_id, block_args;
-    size_t total_num_samps, spb, radio_id, radio_chan, spp;
+    size_t total_num_samps, spb, radio_id, radio_chan;
     double rate, freq, gain, bw, total_time, setup_time;
 
     //setup the program options
     po::options_description desc("Allowed options");
     desc.add_options()
         ("help", "help message")
-        ("file", po::value<std::string>(&file)->default_value("usrp_samples.dat"), "name of the file to write binary samples to")
-        ("format", po::value<std::string>(&format)->default_value("sc16"), "File sample format: sc16, fc32, or fc64")
-        ("duration", po::value<double>(&total_time)->default_value(0), "total number of seconds to receive")
-        ("nsamps", po::value<size_t>(&total_num_samps)->default_value(0), "total number of samples to receive")
         ("spb", po::value<size_t>(&spb)->default_value(10000), "samples per buffer")
         ("streamargs", po::value<std::string>(&streamargs)->default_value(""), "stream args")
-        ("progress", "periodically display short-term bandwidth")
-        ("stats", "show average bandwidth on exit")
-        ("sizemap", "track packet size and display breakdown on exit")
-        ("null", "run without writing to file")
         ("continue", "don't abort on a bad packet")
 
         ("args", po::value<std::string>(&args)->default_value(""), "USRP device address args")
@@ -259,7 +250,6 @@ int UHD_SAFE_MAIN(int argc, char *argv[]){
 
         ("block-id", po::value<std::string>(&block_id)->default_value(""), "If block ID is specified, this block is inserted between radio and host.")
         ("block-args", po::value<std::string>(&block_args)->default_value(""), "These args are passed straight to the block.")
-        ("spp", po::value<size_t>(&spp)->default_value(0), "Samples per packet")
     ;
     po::variables_map vm;
     po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -304,41 +294,6 @@ int UHD_SAFE_MAIN(int argc, char *argv[]){
     uhd::rfnoc::radio_ctrl::sptr radio_ctrl = usrp->get_block_ctrl< uhd::rfnoc::radio_ctrl >(radio_ctrl_id);
     std::cout << "Using radio " << radio_id << ", channel " << radio_chan << std::endl;
 
-    // create DDC block controller
-    uhd::rfnoc::block_id_t ddc_ctrl_id(0, "DDC", 0);
-    uhd::rfnoc::ddc_block_ctrl::sptr ddc_ctrl = usrp->get_block_ctrl<uhd::rfnoc::ddc_block_ctrl>(ddc_ctrl_id);
-
-    uhd::rfnoc::block_id_t duc_ctrl_id(0, "DUC", 0);
-    uhd::rfnoc::duc_block_ctrl::sptr duc_ctrl = usrp->get_block_ctrl<uhd::rfnoc::duc_block_ctrl>(duc_ctrl_id);
-
-    uhd::rfnoc::block_id_t keep_one_in_n_ctrl_id(0, "KeepOneInN", 0);
-    uhd::rfnoc::block_ctrl_base::sptr keep_one_in_n_ctrl = usrp->get_block_ctrl<uhd::rfnoc::block_ctrl_base>(keep_one_in_n_ctrl_id);
-
-    if(not keep_one_in_n_ctrl) {
-	std::cout << "Error: Device has no KeepOneInN" << std::endl;
-    }
-    // create splitstream block controller
-    uhd::rfnoc::block_id_t splitstream_ctrl_id(0, "SplitStream", 0);
-    uhd::rfnoc::block_ctrl_base::sptr splitstream_ctrl = usrp->get_block_ctrl<uhd::rfnoc::block_ctrl_base>(splitstream_ctrl_id);
-
-    if(not splitstream_ctrl) {
-	std::cout << "Error: Device has no SplitStream" << std::endl;
-    }
-
-    uhd::rfnoc::block_id_t lftx_ctrl_id(0, "Radio", 1);
-    uhd::rfnoc::radio_ctrl::sptr lftx_ctrl = usrp->get_block_ctrl< uhd::rfnoc::radio_ctrl >(lftx_ctrl_id);
-
-    if(not lftx_ctrl) {
-	std::cout << "Error: device has no Radio 1" << std::endl;
-    }
-
-    uhd::rfnoc::block_id_t fifo_ctrl_id(0, "FIFO", 0);
-    uhd::rfnoc::block_ctrl_base::sptr fifo_ctrl = usrp->get_block_ctrl< uhd::rfnoc::block_ctrl_base >(fifo_ctrl_id);
-
-    uhd::rfnoc::block_id_t dmafifo_ctrl_id(0, "DmaFIFO", 0);
-    uhd::rfnoc::dma_fifo_block_ctrl::sptr dmafifo_ctrl = usrp->get_block_ctrl< uhd::rfnoc::dma_fifo_block_ctrl >(dmafifo_ctrl_id);
-    dmafifo_ctrl->resize(0, 33554432, 0);
-
     /************************************************************************
      * Set up radio
      ***********************************************************************/
@@ -355,19 +310,8 @@ int UHD_SAFE_MAIN(int argc, char *argv[]){
         return EXIT_FAILURE;
     }
     std::cout << boost::format("Setting RX Rate: %f Msps...") % (rate/1e6) << std::endl;
-    radio_ctrl->set_rate(200e6);
-
-//    lftx_ctrl->set_args("");
-    lftx_ctrl->set_rate(200e6);
-
-    ddc_ctrl->set_arg("input_rate", 200e6);
-    ddc_ctrl->set_arg("output_rate", 100e6);
-    duc_ctrl->set_arg("input_rate", 100e6);
-    duc_ctrl->set_arg("output_rate", 200e6);
-    keep_one_in_n_ctrl->set_arg("n", 100);
-//    ddc_ctrl->set_arg("frequency", 0);
+    radio_ctrl->set_rate(rate);
     std::cout << boost::format("Actual RX Rate: %f Msps...") % (radio_ctrl->get_rate()/1e6) << std::endl << std::endl;
-    std::cout << boost::format("Actual DDC Rate: %f Msps...") % (ddc_ctrl->get_arg<double>("output_rate")/1e6) << std::endl << std::endl;
 
     //set the center frequency
     if (vm.count("freq")) {
@@ -399,8 +343,6 @@ int UHD_SAFE_MAIN(int argc, char *argv[]){
         radio_ctrl->set_rx_antenna(ant, radio_chan);
     }
 
-    lftx_ctrl->set_tx_frequency(0, 0);
-
     boost::this_thread::sleep(boost::posix_time::milliseconds(long(setup_time*1000))); //allow for some setup time
 
 
@@ -412,8 +354,7 @@ int UHD_SAFE_MAIN(int argc, char *argv[]){
             //check_locked_sensor(usrp->get_mboard_sensor_names(0), "ref_locked", boost::bind(&uhd::usrp::multi_usrp::get_mboard_sensor, usrp, _1, radio_id), setup_time);
     }
 
-    if(spp != 0) radio_ctrl->set_arg<int>("spp", spp);
-    spp = radio_ctrl->get_arg<int>("spp");
+    size_t spp = radio_ctrl->get_arg<int>("spp");
 
     /************************************************************************
      * Set up streaming
@@ -422,28 +363,32 @@ int UHD_SAFE_MAIN(int argc, char *argv[]){
 
     uhd::rfnoc::graph::sptr rx_graph = usrp->create_graph("rfnoc_rx_to_file");
     usrp->clear();
-    //connect the two
-/*    rx_graph->connect(radio_ctrl_id, 0, splitstream_ctrl_id, uhd::rfnoc::ANY_PORT);
-    rx_graph->connect(splitstream_ctrl_id, 0, keep_one_in_n_ctrl_id, uhd::rfnoc::ANY_PORT);
-    rx_graph->connect(splitstream_ctrl_id, 1, lftx_ctrl_id, uhd::rfnoc::ANY_PORT);
-*/
-
-    //ok, the graph will look as follows (will try in Gnuradio first):
-    // RadioRX -> DDC(100Msps) -> Splitstream -> Keep1inN->FIFO->Host
-    //                                        -> DMAFIFO -> DUC(100Msps) -> RadioTX
-
-    rx_graph->connect(radio_ctrl_id, 0, ddc_ctrl_id, uhd::rfnoc::ANY_PORT);
-    rx_graph->connect(ddc_ctrl_id, 0, splitstream_ctrl_id, uhd::rfnoc::ANY_PORT);
-    rx_graph->connect(splitstream_ctrl_id, 0, keep_one_in_n_ctrl_id, uhd::rfnoc::ANY_PORT);
-//    rx_graph->connect(keep_one_in_n_ctrl_id, 0, fifo_ctrl_id, uhd::rfnoc::ANY_PORT);
-    rx_graph->connect(splitstream_ctrl_id, 1, duc_ctrl_id, 0);
-//    rx_graph->connect(dmafifo_ctrl_id, 1, duc_ctrl_id, 0);
-    rx_graph->connect(duc_ctrl_id, 0, lftx_ctrl_id, uhd::rfnoc::ANY_PORT);
-
     // Set the stream args on the radio:
-    //streamer_args["block_id"] = fifo_ctrl->get_block_id().to_string();
-    streamer_args["block_id"] = keep_one_in_n_ctrl->get_block_id().to_string();
-    streamer_args["block_port"] = str(boost::format("%d") % 0);
+    if (block_id.empty()) {
+        // If no extra block is required, connect to the radio:
+        streamer_args["block_id"] = radio_ctrl_id.to_string();
+        streamer_args["block_port"] = str(boost::format("%d") % radio_chan);
+    } else {
+        // Otherwise, see if the requested block exists and connect it to the radio:
+        if (not usrp->has_block(block_id)) {
+            std::cout << "Block does not exist on current device: " << block_id << std::endl;
+            return EXIT_FAILURE;
+        }
+
+        uhd::rfnoc::source_block_ctrl_base::sptr blk_ctrl =
+            usrp->get_block_ctrl<uhd::rfnoc::source_block_ctrl_base>(block_id);
+
+        if (not block_args.empty()) {
+            // Set the block args on the other block:
+            blk_ctrl->set_args(uhd::device_addr_t(block_args));
+        }
+        // Connect:
+        std::cout << "Connecting " << radio_ctrl_id << " ==> " << blk_ctrl->get_block_id() << std::endl;
+        rx_graph->connect(radio_ctrl_id, radio_chan, blk_ctrl->get_block_id(), uhd::rfnoc::ANY_PORT);
+        streamer_args["block_id"] = blk_ctrl->get_block_id().to_string();
+
+        spp = blk_ctrl->get_args().cast<size_t>("spp", spp);
+    }
 
     //create a receive streamer
     UHD_MSG(status) << "Samples per packet: " << spp << std::endl;
