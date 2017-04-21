@@ -1,0 +1,19 @@
+<!--This defines one NoC-Block.-->
+<nocblock>
+  <name>Second output of predistorter</name>
+  <blockname>Predistorter1</blockname>
+  <!--There can be several of these:-->
+  <ids>
+    <id revision="0">99550001</id>
+  </ids>
+  <ports>
+    <sink>
+      <name>dump</name>
+    </sink>
+    <source>
+      <name>out1</name>
+      <type>sc16</type>
+      <port>0</port>
+    </source>
+  </ports>
+</nocblock>

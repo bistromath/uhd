@@ -4,7 +4,7 @@
   <blockname>Magphase</blockname>
   <!--There can be several of these:-->
   <ids>
-    <id revision="0">8844</id>
+    <id revision="0">88440000</id>
   </ids>
   <ports>
     <sink>
@@ -15,11 +15,6 @@
       <name>mag</name>
       <type>sc16</type>
       <port>0</port>
-    </source>
-    <source>
-      <name>norm</name>
-      <type>sc16</type>
-      <port>1</port>
     </source>
   </ports>
   <registers>

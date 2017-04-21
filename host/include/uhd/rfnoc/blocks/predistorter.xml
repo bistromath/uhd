@@ -4,7 +4,7 @@
   <blockname>Predistorter</blockname>
   <!--There can be several of these:-->
   <ids>
-    <id revision="0">6275747473</id>
+    <id revision="0">99550000</id>
   </ids>
   <ports>
     <sink>
@@ -15,11 +15,39 @@
       <name>out0</name>
       <type>sc16</type>
     </source>
-    <source>
-      <name>out1</name>
-      <type>sc16</type>
-    </source>
   </ports>
+  <registers>
+    <setreg>
+      <name>MAG_GAIN</name>
+      <address>192</address>
+    </setreg>
+    <setreg>
+      <name>SQUELCH</name>
+      <address>193</address>
+    </setreg>
+  </registers>
+  <!-- Args -->
+  <args>
+    <arg>
+      <name>mag_gain</name>
+      <type>double</type>
+      <value>1.0</value>
+<!---      <check>GT($mag_gain, 0.0) AND LT($mag_gain, 128.0)</check>
+      <check_message>Magnitude gain must be in (0, 128).</check_message>
+-->
+      <action>SR_WRITE("MAG_GAIN", IROUND(MULT($mag_gain, 256.0)))</action>
+    </arg>
+    <arg>
+      <name>squelch</name>
+      <type>double</type>
+      <value>0.0</value>
+<!--
+      <check>GT($squelch, 0.0) AND LT($squelch, 1.0)</check>
+      <check_message>Squelch must be in (0, 1).</check_message>
+-->
+      <action>SR_WRITE("SQUELCH", IROUND(MULT($squelch, 16384.0)))</action>
+    </arg>
+  </args>
   <!--<components>-->
     <!--<component>-->
       <!--<key revision="1">nocshell</key>-->
