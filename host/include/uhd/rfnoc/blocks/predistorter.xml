@@ -25,6 +25,14 @@
       <name>SQUELCH</name>
       <address>193</address>
     </setreg>
+    <setreg>
+      <name>DRIVE_GAIN</name>
+      <address>194</address>
+    </setreg>
+    <setreg>
+      <name>FINAL_GAIN</name>
+      <address>195</address>
+    </setreg>
   </registers>
   <!-- Args -->
   <args>
@@ -46,6 +54,24 @@
       <check_message>Squelch must be in (0, 1).</check_message>
 -->
       <action>SR_WRITE("SQUELCH", IROUND(MULT($squelch, 16384.0)))</action>
+    </arg>
+    <arg>
+      <name>drive_gain</name>
+      <type>double</type>
+      <value>1.0</value>
+<!---      <check>GT($drive_gain, 0.0) AND LT($drive_gain, 128.0)</check>
+      <check_message>Drive gain must be in (0, 128).</check_message>
+-->
+      <action>SR_WRITE("DRIVE_GAIN", IROUND(MULT($drive_gain, 256.0)))</action>
+    </arg>
+    <arg>
+      <name>final_gain</name>
+      <type>double</type>
+      <value>1.0</value>
+<!---      <check>GT($final_gain, 0.0) AND LT($final_gain, 128.0)</check>
+      <check_message>Final gain must be in (0, 128).</check_message>
+-->
+      <action>SR_WRITE("FINAL_GAIN", IROUND(MULT($final_gain, 256.0)))</action>
     </arg>
   </args>
   <!--<components>-->
