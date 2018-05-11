@@ -27,11 +27,11 @@
     </setreg>
     <setreg>
       <name>DRIVE_GAIN</name>
-      <address>194</address>
+      <address>195</address>
     </setreg>
     <setreg>
       <name>FINAL_GAIN</name>
-      <address>195</address>
+      <address>194</address>
     </setreg>
   </registers>
   <!-- Args -->
