@@ -26,12 +26,16 @@
       <address>193</address>
     </setreg>
     <setreg>
+      <name>FINAL_GAIN</name>
+      <address>194</address>
+    </setreg>
+    <setreg>
       <name>DRIVE_GAIN</name>
       <address>195</address>
     </setreg>
     <setreg>
-      <name>FINAL_GAIN</name>
-      <address>194</address>
+      <name>PREDRIVE_POWER</name>
+      <address>196</address>
     </setreg>
   </registers>
   <!-- Args -->
@@ -72,6 +76,12 @@
       <check_message>Final gain must be in (0, 128).</check_message>
 -->
       <action>SR_WRITE("FINAL_GAIN", IROUND(MULT($final_gain, 256.0)))</action>
+    </arg>
+    <arg>
+	    <name>predrive_power</name>
+	    <type>int</type>
+	    <value>1</value>
+	    <action>SR_WRITE("PREDRIVE_POWER", $predrive_power)</action>
     </arg>
   </args>
   <!--<components>-->
