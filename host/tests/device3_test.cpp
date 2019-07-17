@@ -67,6 +67,8 @@ public:
         _rfnoc_block_ctrl.push_back(block_ctrl::make(make_args));
     }
 
+    void register_async_callback(uhd::async_metadata_t::event_code_t, device3::async_handler_t) {}
+
     rx_streamer::sptr get_rx_stream(const stream_args_t& args)
     {
         throw uhd::not_implemented_error(args.args.to_string());

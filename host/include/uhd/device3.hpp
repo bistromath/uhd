@@ -14,6 +14,7 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/units/detail/utility.hpp>
 #include <vector>
+#include <functional>
 
 namespace uhd {
 
@@ -28,6 +29,9 @@ class UHD_API device3 : public uhd::device
 {
 public:
     typedef boost::shared_ptr<device3> sptr;
+    typedef std::function<void(async_metadata_t)> async_handler_t;
+    typedef struct { async_metadata_t::event_code_t event_code;
+                     async_handler_t handler;} async_callback_t;
 
     //! Same as uhd::device::make(), but will fail if not actually a device3
     static sptr make(const device_addr_t& hint, const size_t which = 0);
@@ -39,6 +43,10 @@ public:
      * TODO write docs
      */
     void clear();
+
+    /*! Register an async callback to be called when receiving an async message.
+     */
+    virtual void register_async_callback(const async_metadata_t::event_code_t event_code, async_handler_t handler) = 0;
 
     /*! \brief Checks if an RFNoC block exists on the device.
      *

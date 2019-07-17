@@ -154,6 +154,7 @@ public:
     uhd::tx_streamer::sptr get_tx_stream(const uhd::stream_args_t&);
     uhd::rx_streamer::sptr get_rx_stream(const uhd::stream_args_t&);
     bool recv_async_msg(uhd::async_metadata_t& async_metadata, double timeout);
+    void register_async_callback(uhd::async_metadata_t::event_code_t event_code, device3::async_handler_t handler);
 
     /***********************************************************************
      * Other public APIs
@@ -246,6 +247,9 @@ private:
      **********************************************************************/
     //! Buffer for async metadata
     boost::shared_ptr<async_md_type> _async_md;
+
+    //! List of callback functions
+    std::vector<device3::async_callback_t> _async_callbacks;
 
     //! This mutex locks the get_xx_stream() functions.
     boost::mutex _transport_setup_mutex;

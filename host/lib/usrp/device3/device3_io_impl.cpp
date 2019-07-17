@@ -202,6 +202,7 @@ static void handle_tx_async_msgs(boost::shared_ptr<async_tx_info_t> async_info,
     zero_copy_if::sptr xport,
     uint32_t (*to_host)(uint32_t),
     void (*unpack)(const uint32_t* packet_buff, vrt::if_packet_info_t&),
+    std::vector<device3::async_callback_t> *async_callbacks,
     boost::function<double(void)> get_tick_rate)
 {
     managed_recv_buffer::sptr buff = xport->get_recv_buff();
@@ -247,7 +248,17 @@ static void handle_tx_async_msgs(boost::shared_ptr<async_tx_info_t> async_info,
         metadata.channel = async_info->device_channel;
         async_info->old_async_queue->push_with_pop_on_full(metadata);
         standard_async_msg_prints(metadata);
+
+        for (size_t i=0; i< async_callbacks->size(); i++) {
+            if(async_callbacks->at(i).event_code == metadata.event_code) {
+                async_callbacks->at(i).handler(metadata);
+            }
+        }
     }
+}
+
+void device3_impl::register_async_callback(const async_metadata_t::event_code_t event_code, device3::async_handler_t handler) {
+    _async_callbacks.push_back({event_code, handler});
 }
 
 bool device3_impl::recv_async_msg(async_metadata_t& async_metadata, double timeout)
@@ -711,14 +722,17 @@ tx_streamer::sptr device3_impl::get_tx_stream(const uhd::stream_args_t& args_)
         async_tx_info->async_queue     = async_md;
         async_tx_info->old_async_queue = _async_md;
 
+	std::vector<device3::async_callback_t> *cb = &_async_callbacks;
+
         task::sptr async_task =
-            task::make([async_tx_info, async_xport, xport, send_terminator]() {
+            task::make([async_tx_info, async_xport, xport, cb, send_terminator]() {
                 handle_tx_async_msgs(async_tx_info,
                     async_xport.recv,
                     xport.endianness == ENDIANNESS_BIG ? uhd::ntohx<uint32_t>
                                                        : uhd::wtohx<uint32_t>,
                     xport.endianness == ENDIANNESS_BIG ? vrt::chdr::if_hdr_unpack_be
                                                        : vrt::chdr::if_hdr_unpack_le,
+	            cb,
                     [send_terminator]() { return send_terminator->get_tick_rate(); });
             });
         my_streamer->add_async_msg_task(async_task);
